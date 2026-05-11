@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encuesta para Cursos Online - NUTEVET, S.L.</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .step { display: none; }
+        .step.active { display: block; }
+        
+        /* Estilo para opciones seleccionadas (Radio y Checkbox) */
+        .option-card input:checked + .card-content {
+            border-color: #059669;
+            background-color: #f0fdf4;
+            box-shadow: 0 0 0 2px #059669;
+        }
+        
+        .option-card input:checked + .card-content .check-icon {
+            display: block;
+        }
+
+        .check-icon {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen font-sans text-slate-800">
+
+    <div class="max-w-xl mx-auto px-4 py-8">
+        <!-- Contenedor Principal -->
+        <div class="bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-200">
+            
+            <!-- Barra de progreso -->
+            <div class="h-3 bg-slate-100">
+                <div id="progress" class="h-full bg-emerald-500 transition-all duration-500" style="width: 7%"></div>
+            </div>
+
+            <form id="surveyForm" class="p-6 md:p-10">
+
+                <!-- PANTALLA 1: Bienvenida y Privacidad -->
+                <div class="step active" data-step="1">
+                    <div class="text-center mb-6">
+                        <h1 class="text-3xl font-black text-slate-900 mt-1">NUTEVET, S.L.</h1>
+                    </div>
+                    
+                    <h2 class="text-xl font-bold text-emerald-700 mb-4">ENCUESTA PARA CURSOS ONLINE</h2>
+                    <p class="text-slate-600 mb-6 leading-relaxed">
+                        Queremos conocer sus necesidades formativas para adaptar nuestra oferta a sus prioridades. 
+                        <strong>Le llevará menos de 2 minutos.</strong>
+                    </p>
+                    
+                    <div class="space-y-4 mb-6">
+                        <label class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 cursor-pointer transition">
+                            <input type="checkbox" id="privacidad" name="privacidad" required class="mt-1 w-6 h-6 text-emerald-600 rounded border-slate-300">
+                            <span class="text-sm">He leído y acepto la <a href="https://fcodelrosal.github.io/Privacidad/" class="text-emerald-600 underline font-semibold">Política de Privacidad</a> (Obligatorio).</span>
+                        </label>
+                        <label class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 cursor-pointer transition">
+                            <input type="checkbox" id="notificaciones" name="notificaciones" class="mt-1 w-6 h-6 text-emerald-600 rounded border-slate-300">
+                            <span class="text-sm">Deseo recibir notificaciones por teléfono o correo electrónico sobre futuras acciones formativas.</span>
+                        </label>
+                    </div>
+
+                    <div class="bg-slate-50 p-4 rounded-xl text-xs text-slate-500 border border-slate-200 mb-6">
+                        <p class="font-bold mb-1">Información básica sobre protección de datos:</p>
+                        <p><strong>Responsable:</strong> ENTIDAD FORMADORA.</p>
+                        <p><strong>Finalidad:</strong> Gestión de preferencias formativas y envío de notificaciones si consiente.</p>
+                        <p><strong>Legitimación:</strong>Consentimiento del interesado.</p>
+                        <p><strong>Derechos:</strong> Acceso, rectificación y supresión enviando solicitud a la entidad.</p>
+                    </div>
+
+                    <button type="button" onclick="nextStep()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 px-6 rounded-2xl transition shadow-lg shadow-emerald-200 flex items-center justify-center gap-2">
+                        Comenzar encuesta
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- PANTALLA 2: Datos Personales -->
+                <div class="step" data-step="2">
+                    <h2 class="text-xl font-bold text-slate-800 mb-2">Datos de contacto</h2>
+                    <p class="text-sm text-slate-500 mb-6">Deje en blanco si prefiere que la encuesta sea anónima.</p>
+                    
+                    <div class="space-y-5">
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-1">Nombre y apellidos</label>
+                            <input type="text" name="nombre" class="w-full p-4 rounded-xl border-2 border-slate-200 focus:border-emerald-500 focus:ring-0 outline-none transition">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-1">Teléfono</label>
+                            <input type="tel" name="telefono" class="w-full p-4 rounded-xl border-2 border-slate-200 focus:border-emerald-500 focus:ring-0 outline-none transition">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-1">Email</label>
+                            <input type="email" name="email" class="w-full p-4 rounded-xl border-2 border-slate-200 focus:border-emerald-500 focus:ring-0 outline-none transition">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PANTALLA 3: Especies (MULTISELECCIÓN MEJORADA) -->
+                <div class="step" data-step="3">
+                    <h2 class="text-xl font-bold text-slate-800 mb-2">¿Con qué especies trabaja?</h2>
+                    <p class="text-sm text-slate-500 mb-6">Puede seleccionar varias opciones.</p>
+                    <div class="grid grid-cols-1 gap-4">
+                        <label class="option-card relative cursor-pointer">
+                            <input type="checkbox" name="especies" value="Bovino" class="hidden">
+                            <div class="card-content flex items-center justify-between p-5 border-2 border-slate-200 rounded-2xl transition">
+                                <span class="text-lg font-bold">🐄 Bovino</span>
+                                <div class="check-icon text-emerald-600"><svg class="w-7 h-7" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg></div>
+                            </div>
+                        </label>
+                        <label class="option-card relative cursor-pointer">
+                            <input type="checkbox" name="especies" value="Caprino" class="hidden">
+                            <div class="card-content flex items-center justify-between p-5 border-2 border-slate-200 rounded-2xl transition">
+                                <span class="text-lg font-bold">🐐 Caprino</span>
+                                <div class="check-icon text-emerald-600"><svg class="w-7 h-7" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg></div>
+                            </div>
+                        </label>
+                        <label class="option-card relative cursor-pointer">
+                            <input type="checkbox" name="especies" value="Ovino" class="hidden">
+                            <div class="card-content flex items-center justify-between p-5 border-2 border-slate-200 rounded-2xl transition">
+                                <span class="text-lg font-bold">🐑 Ovino</span>
+                                <div class="check-icon text-emerald-600"><svg class="w-7 h-7" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg></div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- PANTALLA 4: Horario -->
+                <div class="step" data-step="4">
+                    <h2 class="text-xl font-bold text-slate-800 mb-6">¿Qué horario prefiere?</h2>
+                    <div class="grid grid-cols-1 gap-3">
+                        <label class="option-card relative cursor-pointer">
+                            <input type="radio" name="horario" value="9:00 - 14:00" class="hidden">
+                            <div class="card-content flex items-center justify-between p-4 border-2 border-slate-200 rounded-xl transition">
+                                <span class="font-bold text-slate-700">Mañanas (9:00 – 14:00)</span>
+                                <div class="check-icon text-emerald-600"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg></div>
+                            </div>
+                        </label>
+                        <label class="option-card relative cursor-pointer">
+                            <input type="radio" name="horario" value="15:00 - 20:00" class="hidden">
+                            <div class="card-content flex items-center justify-between p-4 border-2 border-slate-200 rounded-xl transition">
+                                <span class="font-bold text-slate-700">Tardes (15:00 – 20:00)</span>
+                                <div class="check-icon text-emerald-600"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg></div>
+                            </div>
+                        </label>
+                        <!-- Más opciones de horario -->
+                        <label class="option-card relative cursor-pointer">
+                            <input type="radio" name="horario" value="15:30 - 20:30" class="hidden">
+                            <div class="card-content flex items-center justify-between p-4 border-2 border-slate-200 rounded-xl transition">
+                                <span class="font-bold text-slate-700">Tardes (15:30 – 20:30)</span>
+                                <div class="check-icon text-emerald-600"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg></div>
+                            </div>
+                        </label>
+                        <label class="option-card relative cursor-pointer">
+                            <input type="radio" name="horario" value="15:30 - 20:30" class="hidden">
+                            <div class="card-content flex items-center justify-between p-4 border-2 border-slate-200 rounded-xl transition">
+                                <span class="font-bold text-slate-700">Tardes (16:00 – 21:00)</span>
+                                <div class="check-icon text-emerald-600"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg></div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- PANTALLA 5: Distribución -->
+                <div class="step" data-step="5">
+                    <h2 class="text-xl font-bold text-slate-800 mb-6">Distribución de días</h2>
+                    <div class="space-y-4">
+                        <label class="option-card relative cursor-pointer">
+                            <input type="radio" name="distribucion" value="4 dias seguidos" class="hidden">
+                            <div class="card-content flex items-center justify-between p-5 border-2 border-slate-200 rounded-2xl transition">
+                                <span class="font-bold text-slate-700 text-lg">4 días seguidos</span>
+                                <div class="check-icon text-emerald-600"><svg class="w-7 h-7" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg></div>
+                            </div>
+                        </label>
+                        <label class="option-card relative cursor-pointer">
+                            <input type="radio" name="distribucion" value="2 semanas" class="hidden">
+                            <div class="card-content flex items-center justify-between p-5 border-2 border-slate-200 rounded-2xl transition">
+                                <span class="font-bold text-slate-700 text-lg">Repartido en 2 semanas (Ej: lunes y miércoles cada semana)</span>
+                                <div class="check-icon text-emerald-600"><svg class="w-7 h-7" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg></div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- PANTALLA 6: Meses -->
+                <div class="step" data-step="6">
+                    <h2 class="text-xl font-bold text-slate-800 mb-2">¿Qué meses prefiere?</h2>
+                    <p class="text-sm text-slate-500 mb-6">Seleccione todos los que le vengan bien.</p>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label class="option-card relative cursor-pointer">
+                            <input type="checkbox" name="meses" value="Enero" class="hidden">
+                            <div class="card-content p-3 text-center border-2 border-slate-100 rounded-xl transition font-bold">Enero</div>
+                        </label>
+                        <label class="option-card relative cursor-pointer">
+                            <input type="checkbox" name="meses" value="Febrero" class="hidden">
+                            <div class="card-content p-3 text-center border-2 border-slate-100 rounded-xl transition font-bold">Febrero</div>
+                        </label>
+                        <label class="option-card relative cursor-pointer">
+                            <input type="checkbox" name="meses" value="Marzo" class="hidden">
+                            <div class="card-content p-3 text-center border-2 border-slate-100 rounded-xl transition font-bold">Marzo</div>
+                        </label>
+                        <label class="option-card relative cursor-pointer">
+                            <input type="checkbox" name="meses" value="Abril" class="hidden">
+                            <div class="card-content p-3 text-center border-2 border-slate-100 rounded-xl transition font-bold">Abril</div>
+                        </label>
+                        <label class="option-card relative cursor-pointer">
+                            <input type="checkbox" name="meses" value="Mayo" class="hidden">
+                            <div class="card-content p-3 text-center border-2 border-slate-100 rounded-xl transition font-bold">Mayo</div>
+                        </label>
+                        <label class="option-card relative cursor-pointer">
+                            <input type="checkbox" name="meses" value="Junio" class="hidden">
+                            <div class="card-content p-3 text-center border-2 border-slate-100 rounded-xl transition font-bold">Junio</div>
+                        </label>
+                        <label class="option-card relative cursor-pointer">
+                            <input type="checkbox" name="meses" value="Julio" class="hidden">
+                            <div class="card-content p-3 text-center border-2 border-slate-100 rounded-xl transition font-bold">Julio</div>
+                        </label>
+                        <label class="option-card relative cursor-pointer">
+                            <input type="checkbox" name="meses" value="Agosto" class="hidden">
+                            <div class="card-content p-3 text-center border-2 border-slate-100 rounded-xl transition font-bold">Agosto</div>
+                        </label>
+                        <label class="option-card relative cursor-pointer">
+                            <input type="checkbox" name="meses" value="Septiembre" class="hidden">
+                            <div class="card-content p-3 text-center border-2 border-slate-100 rounded-xl transition font-bold">Septiembre</div>
+                        </label>
+                        <label class="option-card relative cursor-pointer">
+                            <input type="checkbox" name="meses" value="Octubre" class="hidden">
+                            <div class="card-content p-3 text-center border-2 border-slate-100 rounded-xl transition font-bold">Octubre</div>
+                        </label>
+                        <label class="option-card relative cursor-pointer">
+                            <input type="checkbox" name="meses" value="Noviembre" class="hidden">
+                            <div class="card-content p-3 text-center border-2 border-slate-100 rounded-xl transition font-bold">Noviembre</div>
+                        </label>
+                        <label class="option-card relative cursor-pointer">
+                            <input type="checkbox" name="meses" value="Diciembre" class="hidden">
+                            <div class="card-content p-3 text-center border-2 border-slate-100 rounded-xl transition font-bold">Diciembre</div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- PANTALLA 7: Cursos -->
+                <div class="step" data-step="7">
+                    <h2 class="text-xl font-bold text-slate-800 mb-6">Cursos de interés</h2>
+                    <div class="space-y-3">
+                        <!-- Repetir este bloque para cada curso -->
+                        <label class="option-card relative cursor-pointer block">
+                            <input type="checkbox" name="cursos" value="Bienestar Rumiantes" class="hidden">
+                            <div class="card-content p-4 border-2 border-slate-100 rounded-xl flex items-center gap-3 transition">
+                                <div class="check-icon text-emerald-600 shrink-0"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg></div>
+                                <span class="text-sm font-bold">Bienestar Animal: Pequeños Rumiantes</span>
+                            </div>
+                        </label>
+                        <label class="option-card relative cursor-pointer block">
+                            <input type="checkbox" name="cursos" value="Bienestar Bovino" class="hidden">
+                            <div class="card-content p-4 border-2 border-slate-100 rounded-xl flex items-center gap-3 transition">
+                                <div class="check-icon text-emerald-600 shrink-0"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg></div>
+                                <span class="text-sm font-bold">Bienestar Animal: Bovino</span>
+                            </div>
+                        </label>
+                        <label class="option-card relative cursor-pointer block">
+                            <input type="checkbox" name="cursos" value="Bienestar Nucleos" class="hidden">
+                            <div class="card-content p-4 border-2 border-slate-100 rounded-xl flex items-center gap-3 transition">
+                                <div class="check-icon text-emerald-600 shrink-0"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg></div>
+                                <span class="text-sm font-bold">Bienestar Animal: Núcleos Zoológicos</span>
+                            </div>
+                        </label>
+                        <label class="option-card relative cursor-pointer block">
+                            <input type="checkbox" name="cursos" value="Actualizacion Rumiantes" class="hidden">
+                            <div class="card-content p-4 border-2 border-slate-100 rounded-xl flex items-center gap-3 transition">
+                                <div class="check-icon text-emerald-600 shrink-0"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg></div>
+                                <span class="text-sm font-bold uppercase text-emerald-600 tracking-tighter">[ACTUALIZACIÓN]</span>
+                                <span class="text-sm font-bold">Bienestar Pequeños Rumiantes</span>
+                            </div>
+                        </label>
+                        <label class="option-card relative cursor-pointer block">
+                            <input type="checkbox" name="cursos" value="Actualizacion Bovino" class="hidden">
+                            <div class="card-content p-4 border-2 border-slate-100 rounded-xl flex items-center gap-3 transition">
+                                <div class="check-icon text-emerald-600 shrink-0"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg></div>
+                                <span class="text-sm font-bold uppercase text-emerald-600 tracking-tighter">[ACTUALIZACIÓN]</span>
+                                <span class="text-sm font-bold">Bienestar Bovino</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- PANTALLA 8: Interés futuro -->
+                <div class="step" data-step="8">
+                    <h2 class="text-xl font-bold text-slate-800 mb-6">¿Interesado en actualizar sus cursos en el futuro?</h2>
+                    <div class="flex gap-4">
+                        <label class="option-card flex-1 relative cursor-pointer">
+                            <input type="radio" name="interes_actualizacion" value="Si" class="hidden">
+                            <div class="card-content h-32 flex flex-col items-center justify-center border-2 border-slate-200 rounded-2xl transition">
+                                <span class="text-3xl font-black text-emerald-600">SÍ</span>
+                                <div class="check-icon mt-2"><svg class="w-6 h-6 text-emerald-600" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg></div>
+                            </div>
+                        </label>
+                        <label class="option-card flex-1 relative cursor-pointer">
+                            <input type="radio" name="interes_actualizacion" value="No" class="hidden">
+                            <div class="card-content h-32 flex flex-col items-center justify-center border-2 border-slate-200 rounded-2xl transition">
+                                <span class="text-3xl font-black text-rose-600">NO</span>
+                                <div class="check-icon mt-2"><svg class="w-6 h-6 text-rose-600" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg></div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- PANTALLA 9: Plazas -->
+                <div class="step" data-step="9">
+                    <h2 class="text-xl font-bold text-slate-800 mb-6 text-center">¿Cuántas plazas necesitaría en total?</h2>
+                    <div class="flex flex-col items-center">
+                        <input type="number" name="plazas" min="0" placeholder="0" class="w-40 text-center p-6 text-5xl font-black bg-slate-50 rounded-3xl border-4 border-slate-200 focus:border-emerald-500 outline-none transition">
+                        <p class="mt-4 text-slate-400 font-medium">Contando con la suya</p>
+                    </div>
+                </div>
+
+                <!-- PANTALLA 10: Detalles -->
+                <div class="step" data-step="10">
+                    <h2 class="text-xl font-bold text-slate-800 mb-8">Detalles de asistencia</h2>
+                    <div class="space-y-8">
+                        <div>
+                            <label class="block font-black text-slate-600 mb-3 text-sm uppercase">Personas por curso:</label>
+                            <input type="number" name="num_personas" min="0" class="w-full p-4 text-xl rounded-2xl border-2 border-slate-200 focus:border-emerald-500 outline-none bg-slate-50 font-bold">
+                        </div>
+                        <div>
+                            <label class="block font-black text-slate-600 mb-3 text-sm uppercase">Número total de cursos:</label>
+                            <input type="number" name="num_cursos" min="0" class="w-full p-4 text-xl rounded-2xl border-2 border-slate-200 focus:border-emerald-500 outline-none bg-slate-50 font-bold">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PANTALLA 11: Otros -->
+                <div class="step" data-step="11">
+                    <h2 class="text-xl font-bold text-slate-800 mb-4">Otros cursos de interés</h2>
+                    <p class="text-sm text-slate-500 mb-4">Indique cualquier otro curso aunque no tenga certificado oficial (ej: informática, manipulador de leche, etc.)</p>
+                    <textarea name="otros_cursos" rows="5" class="w-full p-5 rounded-2xl border-2 border-slate-200 focus:border-emerald-500 outline-none bg-slate-50 font-medium placeholder:text-slate-300 transition" placeholder="Escriba aquí..."></textarea>
+                </div>
+
+                <!-- PANTALLA 12: Pago JCCM -->
+                <div class="step" data-step="12">
+                    <h2 class="text-xl font-bold text-slate-800 mb-6 text-center leading-tight">¿Estaría dispuesto a pagar por cursos certificados por la JCCM?</h2>
+                    <div class="flex gap-4">
+                        <label class="option-card flex-1 cursor-pointer">
+                            <input type="radio" name="pagar_jccm" value="Si" class="hidden">
+                            <div class="card-content h-40 flex flex-col items-center justify-center border-2 border-slate-200 rounded-3xl transition">
+                                <span class="text-4xl font-black text-emerald-600">SÍ</span>
+                                <div class="check-icon mt-2 text-emerald-600"><svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg></div>
+                            </div>
+                        </label>
+                        <label class="option-card flex-1 cursor-pointer">
+                            <input type="radio" name="pagar_jccm" value="No" class="hidden">
+                            <div class="card-content h-40 flex flex-col items-center justify-center border-2 border-slate-200 rounded-3xl transition">
+                                <span class="text-4xl font-black text-rose-600">NO</span>
+                                <div class="check-icon mt-2 text-rose-600"><svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg></div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- PANTALLA 13: Bonificado -->
+                <div class="step" data-step="13">
+                    <h2 class="text-xl font-bold text-slate-800 mb-4 text-center leading-tight">¿Pagaría por cursos JCCM si para sus trabajadores fuera GRATIS?</h2>
+                    <p class="text-center text-slate-500 mb-8 px-4">Recuerde: Lo paga antes y luego se bonifica en los seguros sociales (Coste 0€)</p>
+                    
+                    <div class="flex gap-4 mb-10">
+                        <label class="option-card flex-1 cursor-pointer">
+                            <input type="radio" name="pagar_bonificado" value="Si" class="hidden">
+                            <div class="card-content h-40 flex flex-col items-center justify-center border-2 border-slate-200 rounded-3xl transition">
+                                <span class="text-4xl font-black text-emerald-600">SÍ</span>
+                                <div class="check-icon mt-2 text-emerald-600"><svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg></div>
+                            </div>
+                        </label>
+                        <label class="option-card flex-1 cursor-pointer">
+                            <input type="radio" name="pagar_bonificado" value="No" class="hidden">
+                            <div class="card-content h-40 flex flex-col items-center justify-center border-2 border-slate-200 rounded-3xl transition">
+                                <span class="text-4xl font-black text-rose-600">NO</span>
+                                <div class="check-icon mt-2 text-rose-600"><svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg></div>
+                            </div>
+                        </label>
+                    </div>
+                    
+                    <div id="status" class="hidden text-center p-6 rounded-2xl font-bold"></div>
+                </div>
+
+                <!-- BOTONES DE NAVEGACIÓN -->
+                <div id="navButtons" class="flex gap-4 mt-10">
+                    <button type="button" id="prevBtn" onclick="prevStep()" class="hidden flex-1 border-2 border-slate-200 text-slate-500 py-4 rounded-2xl font-black hover:bg-slate-50 transition uppercase tracking-tighter">
+                        Volver Atrás
+                    </button>
+                    <button type="button" id="nextBtn" onclick="nextStep()" class="hidden flex-1 bg-slate-900 text-white py-4 rounded-2xl font-black hover:bg-black transition uppercase tracking-tighter shadow-xl">
+                        Continuar
+                    </button>
+                    <button type="button" id="submitBtn" onclick="submitForm()" class="hidden flex-1 bg-emerald-700 text-white py-4 rounded-2xl font-black hover:bg-emerald-800 transition uppercase tracking-tighter shadow-xl shadow-emerald-200">
+                        Enviar Encuesta
+                    </button>
+                </div>
+
+            </form>
+        </div>
+        
+        <p class="text-center text-slate-400 font-bold text-xs mt-8">NUTEVET, S.L. © 2026</p>
+    </div>
+
+    <script>
+        // CONFIGURACIÓN (Importante para Google Sheets)
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzkNX0Zu5X_fFUYx1H0VPzWmvuIXuubpFc4TH3sVG7cGRjHoFFM4fuGDp-opUuSJqRmNA/exec';
+
+        let currentStep = 1;
+        const totalSteps = 13;
+
+        function updateUI() {
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            document.querySelector(`.step[data-step="${currentStep}"]`).classList.add('active');
+
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const submitBtn = document.getElementById('submitBtn');
+
+            if (currentStep === 1) {
+                prevBtn.classList.add('hidden');
+                nextBtn.classList.add('hidden');
+                submitBtn.classList.add('hidden');
+            } else if (currentStep === totalSteps) {
+                prevBtn.classList.remove('hidden');
+                nextBtn.classList.add('hidden');
+                submitBtn.classList.remove('hidden');
+            } else {
+                prevBtn.classList.remove('hidden');
+                nextBtn.classList.remove('hidden');
+                submitBtn.classList.add('hidden');
+            }
+
+            const progress = (currentStep / totalSteps) * 100;
+            document.getElementById('progress').style.width = `${progress}%`;
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function nextStep() {
+            if (currentStep === 1) {
+                if (!document.getElementById('privacidad').checked) {
+                    alert("Por favor, acepte la política de privacidad.");
+                    return;
+                }
+            }
+            if (currentStep < totalSteps) {
+                currentStep++;
+                updateUI();
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                updateUI();
+            }
+        }
+
+        async function submitForm() {
+            const submitBtn = document.getElementById('submitBtn');
+            const statusDiv = document.getElementById('status');
+            
+            const bonificado = document.querySelector('input[name="pagar_bonificado"]:checked');
+            if (!bonificado) {
+                alert("Por favor, elija una opción antes de terminar.");
+                return;
+            }
+
+            const formData = new FormData(document.getElementById('surveyForm'));
+            const data = {
+                especies: Array.from(formData.getAll('especies')).join(', '),
+                meses: Array.from(formData.getAll('meses')).join(', '),
+                cursos: Array.from(formData.getAll('cursos')).join(', '),
+                privacidad: formData.get('privacidad') ? 'Sí' : 'No',
+                notificaciones: formData.get('notificaciones') ? 'Sí' : 'No',
+                nombre: formData.get('nombre'),
+                telefono: formData.get('telefono'),
+                email: formData.get('email'),
+                horario: formData.get('horario'),
+                distribucion: formData.get('distribucion'),
+                interes_actualizacion: formData.get('interes_actualizacion'),
+                plazas: formData.get('plazas'),
+                num_personas: formData.get('num_personas'),
+                num_cursos: formData.get('num_cursos'),
+                otros_cursos: formData.get('otros_cursos'),
+                pagar_jccm: formData.get('pagar_jccm'),
+                pagar_bonificado: formData.get('pagar_bonificado')
+            };
+
+            submitBtn.disabled = true;
+            submitBtn.innerText = "REGISTRANDO...";
+            statusDiv.classList.remove('hidden');
+            statusDiv.className = "mt-4 p-6 rounded-2xl bg-slate-50 text-slate-600";
+            statusDiv.innerText = "Guardando sus datos...";
+
+            try {
+                if (GOOGLE_SCRIPT_URL === 'TU_URL_DE_GOOGLE_SCRIPT') {
+                    console.log("SIMULACIÓN DE ENVÍO:", data);
+                    setTimeout(() => {
+                        showFinalSuccess(statusDiv, submitBtn);
+                    }, 1500);
+                } else {
+                    await fetch(GOOGLE_SCRIPT_URL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        body: JSON.stringify(data)
+                    });
+                    showFinalSuccess(statusDiv, submitBtn);
+                }
+            } catch (error) {
+                statusDiv.className = "mt-4 p-6 rounded-2xl bg-rose-50 text-rose-700";
+                statusDiv.innerText = "Hubo un error al enviar. Revise su conexión.";
+                submitBtn.disabled = false;
+                submitBtn.innerText = "REINTENTAR ENVÍO";
+            }
+        }
+
+        function showFinalSuccess(statusDiv, submitBtn) {
+            statusDiv.className = "mt-4 p-8 rounded-3xl bg-emerald-50 text-emerald-800 text-xl";
+            statusDiv.innerHTML = "🏁 <strong>¡ENCUESTA COMPLETADA!</strong><br><span class='text-base font-medium mt-2 block'>Muchísimas gracias por su tiempo. Sus respuestas nos ayudan a mejorar la formación para todos.</span>";
+            submitBtn.classList.add('hidden');
+            document.getElementById('prevBtn').classList.add('hidden');
+        }
+
+        updateUI();
+    </script>
+</body>
+</html>
